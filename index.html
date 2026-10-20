@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Karthik — Photography</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Work+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f2ee; --ink:#22201d; --mute:#7d776f; --line:#dcd8d1; --chip:#e9e5de;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#171614;--ink:#ece8e1;--mute:#8d867c;--line:#2e2c28;--chip:#24221f;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#171614;--ink:#ece8e1;--mute:#8d867c;--line:#2e2c28;--chip:#24221f;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.6 "Work Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body::after{ /* film grain */
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.09;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) body::after{mix-blend-mode:screen;opacity:.06}}
+:root[data-theme="dark"] body::after{mix-blend-mode:screen;opacity:.06}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+header{display:flex;justify-content:space-between;align-items:baseline;padding:22px clamp(16px,4vw,40px);position:sticky;top:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);z-index:20}
+.logo{font:italic 400 26px/1 "Newsreader",serif;text-decoration:none;letter-spacing:-.01em}
+nav{display:flex;gap:22px;font-size:14px}
+nav a{text-decoration:none;color:var(--mute)} nav a:hover{color:var(--ink)}
+
+.intro{padding:clamp(40px,9vw,110px) clamp(16px,4vw,40px) 36px;max-width:980px}
+.intro h1{font:400 clamp(38px,7.5vw,92px)/1.02 "Newsreader",serif;letter-spacing:-.02em;margin:0 0 18px}
+.intro p{max-width:46ch;color:var(--mute);margin:0}
+
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:8px clamp(16px,4vw,40px) 20px}
+.pill{font:500 13px "Work Sans",sans-serif;border:1px solid var(--line);background:transparent;color:var(--ink);padding:7px 15px;border-radius:99px;cursor:pointer}
+.pill[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.spacer{flex:1}
+.count{color:var(--mute);font-size:13px}
+
+#colorPanel{display:none;gap:28px;align-items:center;flex-wrap:wrap;padding:6px clamp(16px,4vw,40px) 26px}
+#colorPanel.on{display:flex}
+.wheelWrap{position:relative;width:190px;height:190px;touch-action:none}
+#wheel{width:190px;height:190px;border-radius:50%;cursor:crosshair;display:block}
+#hub{position:absolute;inset:58px;border-radius:50%;border:1px solid var(--line);pointer-events:none;transition:background .15s}
+.ctrl{display:flex;flex-direction:column;gap:10px;min-width:200px}
+.ctrl label{font-size:13px;color:var(--mute)}
+.ctrl input[type=range]{width:100%;accent-color:var(--ink)}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.sw{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);cursor:pointer;padding:0}
+
+#hub{display:none}
+.readout{font-size:12px;color:var(--mute);letter-spacing:.04em}.readout b{color:var(--ink);font-weight:500;font-variant-numeric:tabular-nums}
+.hex{font:500 13px "Work Sans",sans-serif;background:var(--chip);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 10px;width:110px}
+.ph{position:relative}.pal{position:absolute;left:0;right:0;bottom:0;height:34px;display:flex;opacity:0;transition:opacity .2s;pointer-events:none}.ph:hover .pal{opacity:1}.pal i{flex:1}
+main{padding:0 clamp(16px,4vw,40px) 80px}
+#grid{column-width:260px;column-gap:14px}
+.ph{break-inside:avoid;margin:0 0 14px;cursor:zoom-in;background:var(--chip);overflow:hidden;border-radius:3px;display:block;width:100%;border:0;padding:0}
+.ph img{display:block;width:100%;height:auto;filter:saturate(.88) contrast(.96) sepia(.08);transition:filter .3s}
+.ph:hover img{filter:none}
+.empty{color:var(--mute);padding:30px 0}
+
+section.about{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;padding:70px clamp(16px,4vw,40px);border-top:1px solid var(--line)}
+section.about h2{font:italic 400 38px/1.1 "Newsreader",serif;margin:0}
+section.about p{margin:0 0 14px;max-width:52ch}
+@media(max-width:720px){section.about{grid-template-columns:1fr;gap:18px}}
+footer{padding:0 clamp(16px,4vw,40px) 48px;color:var(--mute);font-size:13px}
+
+#lb{position:fixed;inset:0;z-index:60;background:rgba(15,14,12,.94);display:none;align-items:center;justify-content:center;padding:24px;cursor:zoom-out}
+#lb.on{display:flex}
+#lb img{max-width:100%;max-height:100%;object-fit:contain}
+#lb button{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:18px;background:none;border:0;color:#eee;font-size:30px;cursor:pointer}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="#top">Karthik</a>
+  <nav><a href="#work">Work</a><a href="#about">About</a><a href="https://instagram.com/krn11.ev" target="_blank" rel="noopener">Instagram</a></nav>
+</header>
+
+<div id="top" style="height:clamp(12px,3vw,36px)"></div>
+
+<div class="bar" id="work">
+  <button class="pill" id="modeAll" aria-pressed="true">All photos</button>
+  <button class="pill" id="modeColor" aria-pressed="false">Browse by color</button>
+  <span class="spacer"></span>
+  <span class="count" id="count"></span>
+</div>
+
+<div id="colorPanel">
+  <div class="wheelWrap"><canvas id="wheel" width="380" height="380" aria-label="Color wheel. Click or drag to pick a color."></canvas><div id="hub"></div></div>
+  <div class="ctrl">
+    <div class="readout">Drag the dot to change the photos by colour.</div><div class="readout">HUE <b id="rh">000°</b> &nbsp; SAT <b id="rs">00%</b></div><label for="hex">Brand colour</label><input id="hex" class="hex" value="#c8873f" maxlength="7" spellcheck="false" aria-label="Brand colour hex"><label for="tol">Match <span id="tolv"></span></label>
+    <input id="tol" type="range" min="12" max="90" value="40">
+    <div class="swatches" id="sws"></div>
+  </div>
+</div>
+
+<main><div id="grid"></div><div class="empty" id="empty" hidden>No photos near that color yet. Widen the range.</div></main>
+
+<section class="about" id="about">
+  <h2>About</h2>
+  <div>
+    <p>I’m Karthik. I shoot almost everything — whatever the light is doing that day — on my phone, then grade it to feel like a roll of film.</p>
+    <p>New frames go up first on Instagram: <a href="https://instagram.com/krn11.ev" target="_blank" rel="noopener">@krn11.ev</a></p>
+  </div>
+</section>
+<footer>© <span id="yr"></span> Karthik</footer>
+
+<div id="lb" role="dialog" aria-label="Photo viewer"><button aria-label="Close">×</button><img alt=""></div>
+
+<script src="photos.js"></script>
+<script>
+/* Photos come from photos.js (run make_photos.py to generate it) */
+const PHOTOS = window.PHOTOS || [];
+
+const grid=document.getElementById('grid'),count=document.getElementById('count'),empty=document.getElementById('empty');
+let items=[],mode='all',selHue=30,selSat=.55,tol=40;
+
+/* Build cards and read each photo's average color in the browser */
+PHOTOS.forEach((p,i)=>{
+  const b=document.createElement('button');b.className='ph';b.setAttribute('aria-label','Open photo '+(i+1));
+  const im=new Image();if(p.w&&p.h){im.width=p.w;im.height=p.h}im.alt=p.alt;im.loading='lazy';im.src=p.src;b.appendChild(im);
+  const it={el:b,hue:0,sat:0,light:0,i};items.push(it);
+  b.onclick=()=>openLB(p);
+  const read=()=>{try{
+    const c=document.createElement('canvas');c.width=c.height=16;
+    const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,16,16);
+    const d=x.getImageData(0,0,16,16).data;let r=0,g=0,bl=0,n=0;
+    for(let k=0;k<d.length;k+=4){r+=d[k];g+=d[k+1];bl+=d[k+2];n++}
+    [it.hue,it.sat,it.light]=rgb2hsl(r/n,g/n,bl/n);
+  }catch(e){} if(mode==='color')render()};
+  im.complete&&im.naturalWidth?read():im.addEventListener('load',read);
+  grid.appendChild(b);
+});
+
+function rgb2hsl(r,g,b){r/=255;g/=255;b/=255;const M=Math.max(r,g,b),m=Math.min(r,g,b),l=(M+m)/2,d=M-m;
+  let h=0,s=0;if(d){s=d/(1-Math.abs(2*l-1));
+    h=M===r?((g-b)/d)%6:M===g?(b-r)/d+2:(r-g)/d+4;h=(h*60+360)%360}
+  return [h,s,l]}
+const hd=(a,b)=>{const d=Math.abs(a-b)%360;return d>180?360-d:d};
+
+function render(){
+  let list=items.slice();
+  if(mode==='color'){
+    const dist=it=>Math.hypot(hd(it.hue,selHue)*Math.min(1,.35+selSat),(it.sat-selSat)*90);
+    list=list.filter(it=>dist(it)<=tol).sort((a,b)=>dist(a)-dist(b));
+  }
+  items.forEach(it=>it.el.style.display='none');
+  list.forEach(it=>{it.el.style.display='block';grid.appendChild(it.el)});
+  count.textContent=list.length+(list.length===1?' photo':' photos');
+  empty.hidden=list.length>0;
+}
+
+/* Color wheel */
+const wheel=document.getElementById('wheel'),wx=wheel.getContext('2d'),hub=document.getElementById('hub'),W=380,R=190;
+function drawWheel(){
+  wx.clearRect(0,0,W,W);
+  if(wx.createConicGradient){
+    const g=wx.createConicGradient(-Math.PI/2,R,R);
+    for(let h=0;h<=360;h+=15)g.addColorStop(h/360,`hsl(${h} 55% 58%)`);
+    wx.fillStyle=g;wx.beginPath();wx.arc(R,R,R,0,7);wx.arc(R,R,R*.62,0,7,true);wx.fill('evenodd');
+  }
+  const a=(selHue-90)*Math.PI/180,rr=R*.81;
+  wx.beginPath();wx.arc(R+Math.cos(a)*rr,R+Math.sin(a)*rr,15,0,7);
+  wx.fillStyle=`hsl(${selHue} 55% 58%)`;wx.fill();wx.lineWidth=4;wx.strokeStyle='#fff';wx.stroke();
+  hub.style.background=`hsl(${selHue} 55% 58%)`;
+}
+function pick(e){
+  const r=wheel.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;
+  selHue=(Math.atan2(y,x)*180/Math.PI+90+360)%360;drawWheel();render();
+}
+let drag=false;
+wheel.addEventListener('pointerdown',e=>{drag=true;wheel.setPointerCapture(e.pointerId);pick(e)});
+wheel.addEventListener('pointermove',e=>{if(drag)pick(e)});
+wheel.addEventListener('pointerup',()=>drag=false);
+
+const sws=document.getElementById('sws');
+[0,28,50,120,190,220,280,330].forEach(h=>{
+  const s=document.createElement('button');s.className='sw';s.style.background=`hsl(${h} 55% 58%)`;s.setAttribute('aria-label','Hue '+h);
+  s.onclick=()=>{selHue=h;drawWheel();render()};sws.appendChild(s);
+});
+const tolEl=document.getElementById('tol'),tolv=document.getElementById('tolv');
+tolEl.oninput=()=>{tol=+tolEl.value;tolv.textContent='±'+tol+'°';render()};tolv.textContent='±'+tol+'°';
+
+/* Hue + saturation disc: angle = hue, distance from centre = saturation */
+function drawWheel(){
+  wx.clearRect(0,0,W,W);
+  if(wx.createConicGradient){
+    const g=wx.createConicGradient(-Math.PI/2,R,R);
+    for(let h=0;h<=360;h+=15)g.addColorStop(h/360,`hsl(${h} 85% 52%)`);
+    wx.fillStyle=g;wx.beginPath();wx.arc(R,R,R,0,7);wx.fill();
+  }
+  const rg=wx.createRadialGradient(R,R,0,R,R,R);rg.addColorStop(0,'hsl(0 0% 62%)');rg.addColorStop(1,'hsla(0 0% 62% / 0)');
+  wx.fillStyle=rg;wx.beginPath();wx.arc(R,R,R,0,7);wx.fill();
+  const a=(selHue-90)*Math.PI/180,rr=selSat*R*.94,px=R+Math.cos(a)*rr,py=R+Math.sin(a)*rr;
+  wx.beginPath();wx.arc(px,py,13,0,7);wx.fillStyle=`hsl(${selHue} ${Math.round(selSat*85+10)}% 52%)`;wx.fill();wx.lineWidth=4;wx.strokeStyle='#fff';wx.stroke();
+  document.getElementById('rh').textContent=String(Math.round(selHue)).padStart(3,'0')+'°';
+  document.getElementById('rs').textContent=String(Math.round(selSat*100)).padStart(2,'0')+'%';
+  document.getElementById('hex').value=hsl2hex(selHue,Math.round(selSat*85+10)/100,.52);
+}
+function hsl2hex(h,s,l){const k=n=>(n+h/30)%12,a=s*Math.min(l,1-l),f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));return '#'+[f(0),f(8),f(4)].map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join('')}
+function pick(e){
+  const r=wheel.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;
+  selHue=(Math.atan2(y,x)*180/Math.PI+90+360)%360;selSat=Math.min(1,Math.hypot(x,y)/(r.width/2*.94));drawWheel();render();
+}
+document.getElementById('hex').addEventListener('change',e=>{
+  const m=/^#?([0-9a-f]{6})$/i.exec(e.target.value.trim());if(!m)return;
+  const n=parseInt(m[1],16);const [h,s]=rgb2hsl(n>>16,(n>>8)&255,n&255);selHue=h;selSat=Math.min(1,s);drawWheel();render();
+});
+/* Hover a frame to see its palette */
+items.forEach(it=>{
+  const p=document.createElement('div');p.className='pal';it.el.appendChild(p);
+  it.el.addEventListener('mouseenter',()=>{
+    if(p.childNodes.length)return;try{
+      const im=it.el.querySelector('img'),c=document.createElement('canvas');c.width=c.height=24;
+      const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,24,24);const d=x.getImageData(0,0,24,24).data,B={};
+      for(let k=0;k<d.length;k+=4){const key=(d[k]>>5)+','+(d[k+1]>>5)+','+(d[k+2]>>5),o=B[key]||(B[key]=[0,0,0,0]);o[0]+=d[k];o[1]+=d[k+1];o[2]+=d[k+2];o[3]++}
+      Object.values(B).sort((a,b)=>b[3]-a[3]).slice(0,4).forEach(o=>{const i=document.createElement('i');i.style.background=`rgb(${o[0]/o[3]|0},${o[1]/o[3]|0},${o[2]/o[3]|0})`;p.appendChild(i)});
+    }catch(e){}
+  });
+});
+
+/* Mode toggle */
+const mA=document.getElementById('modeAll'),mC=document.getElementById('modeColor'),panel=document.getElementById('colorPanel');
+function setMode(m){mode=m;mA.setAttribute('aria-pressed',m==='all');mC.setAttribute('aria-pressed',m==='color');
+  panel.classList.toggle('on',m==='color');
+  if(m==='all')items.sort((a,b)=>a.i-b.i);
+  render();if(m==='color')drawWheel()}
+mA.onclick=()=>setMode('all');mC.onclick=()=>setMode('color');
+
+/* Lightbox */
+const lb=document.getElementById('lb'),lbi=lb.querySelector('img');
+function openLB(p){lbi.src=p.src;lbi.alt=p.alt;lb.classList.add('on')}
+lb.onclick=()=>lb.classList.remove('on');
+addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('on')});
+
+document.getElementById('yr').textContent=new Date().getFullYear();
+render();
+</script>
+</body>
+</html>
